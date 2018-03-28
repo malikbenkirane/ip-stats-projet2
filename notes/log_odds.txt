@@ -1,0 +1,8 @@
+In [30]: odds.index(max(odds))
+Out[30]: 13
+
+In [31]: x,y = _, max(odds)
+
+In [32]: x,y
+Out[32]: (13, 72.84331609370625)
+

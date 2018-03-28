@@ -1,0 +1,49 @@
+In [61]: for k in d:
+    ...:     for i,j in d[k]:
+    ...:         assert d[k][(i, j)] == n[k][i, j]
+    ---> OK
+
+Version dictionnaire
+--------------------
+
+%time d = coev.estimate_cooc(read_fasta('../data/Dtrain.txt'))
+CPU times: user 9.77 s, sys: 13.9 ms, total: 9.79 s
+Wall time: 9.82 s
+
+In [52]: np.histogram([len(d[c]) for c in d],20)
+Out[52]: 
+(array([  9,     17,      24,     9,       13,     15,      26,
+         46,     42,      32,     27,      47,     43,      43,
+         21,     8,       13,     3,       2,      1]),
+ array([ 116.,   179.15,  242.3,  305.45,  368.6,  431.75,  494.9,
+         558.05, 621.2,   684.35, 747.5,   810.65, 873.8,   936.95,
+        1000.1,  1063.25, 1126.4, 1189.55, 1252.7, 1315.85, 1379.  ]))
+
+
+In [27]: len(d)
+Out[27]: 441
+
+In [46]: sum([len(d[c]) for c in d])
+Out[46]: 312715
+
+
+Version numpy
+-------------
+
+Initialisation: np.zeros((L,L))
+
+%time n = coev.estimate_cooc(read_fasta('../data/Dtrain.txt'))
+CPU times: user 10.3 s, sys: 2.93 ms, total: 10.3 s
+Wall time: 10.3 s
+
+In [31]: len(n)
+Out[31]: 441
+
+In [56]: len(n[k0])
+Out[56]: 48
+
+In [57]: len(n[k0][0])
+Out[57]: 48
+
+In [54]: 48**2 * len(n.keys())
+Out[54]: 1016064
