@@ -40,7 +40,7 @@ Analyse statistique d'une famille de Prot\'eines}
 \setlength{\parindent}{15pt}
 \begin{abstract}
     Il nous est proposé d'analyser une famille de prot\'eines
-    pr\'ealablement s\'equenc\'ee. Nous rendrons compte de comment
+    s\'equenc\'ee au pr\'ealable. Nous rendrons compte de comment
     exploiter des outils statistiques et probabilistes pour
     analyser ces séquences protéiques et en d\'eduire des propri\'et\'es
     de conservation au sein de la famille, d'appartenance \`a la famille
@@ -53,10 +53,10 @@ Analyse statistique d'une famille de Prot\'eines}
 
 Dans l'int\'egralit\'e des analyses nous ferons r\'ef\'erence \`a une
 unique famille de prot\'eines, $D_{train}$.
-Nous avons acc\`es \`a $M=5643$ prot\'eines toutes de cette famille.
+Nous avons acc\`es \`a $M=5643$ prot\'eines, toutes de cette famille.
 %
 Chaque prot\'eine est d\'ecrite par une s\'equence et
-ces s\'equences, forment l'\emph{alignement}
+ces s\'equences forment l'\emph{alignement}
 que nous \'etudions par la suite.  Une prot\'eine de l'alignement se
 pr\'esente comme une suite d'acide amin\'es (il y en a 20)
 avec \'eventuellement des trous dans la s\'equence.
@@ -76,11 +76,11 @@ d\'ecrit une prot\'eine de la famille $D_{train}$ sur l'alphabet
 \end{equation*}
 pour les $L=48$ positions possibles de l'alignement que nous souhaitons \'etudier.
 
-Les impl\'ementations des analyses du projet sont r\'ealis\'es en
+Les impl\'ementations des analyses du projet sont r\'ealis\'ees en
 \cword{python} (version \cword{3.6}). 
 Ici, pour la lecture de l'alignement le code se trouve
 dans le module \cword{data} (\cword{src/data.py}) o\`u on peux utiliser
-la m\'ethode \cword{read_fasta(filename)} pour lire les lignes qui nous
+la fonction \cword{read_fasta(filename)} pour lire les lignes qui nous
 int\'eressent dans \cword{data/Dtrain.txt} et avoir la liste des s\'equences
 de l'alignement.
 
@@ -93,7 +93,7 @@ l'alignement.
 
 L'alignement se repr\'esente avec une matrice $M$ lignes et $L$ colonnes.
 Les lignes de cette matrice correspondent aux s\'equences et les colonnes
-aux positions de l'alignement.
+correspondent aux positions de l'alignement.
 
 \subsection{\'Evaluation du caract\`ere de l'alignement}
 On s'int\'eresse au nombre d'occurences d'%
@@ -104,12 +104,12 @@ ind\'ependantes on souhaite d\'eterminer $\omega$ tel que
     P(a_0\ldots a_{L-1}|\omega)=
     \prod_{i=0}^{L-1} \underbrace{P(a_i|\omega)}_{\omega_i(a_i)}
 \end{equation*}
-il s'agit de la matrice commun\'ement appel\'ee
+il s'agit de la matrice appel\'ee commun\'ement
 ``position-specific weight matrix'' ou PSWM.
 
-Il est donc question d'estimer la PSWM $\omega$ avec les $n_i(a)$ et en
+Il est question d'estimer la PSWM $\omega$ avec les $n_i(a)$ et en
 utilisant un estimateur de fr\'equence corrig\'e avec un pseudo-compteur
-de valeur 1, donc
+de valeur 1, soit
 \begin{equation*}
     \omega_i(a) = \frac{n_i(a) + 1}{M+|\mathcal{A}|}.
     \label{eq:estimateur_pswm}
@@ -125,17 +125,18 @@ conserv\'ees. Pour cela, nous mesurons la quantit\'e d'information relative
 \`a une position
 % remarque: interruption du fonctionnement de la proteine
 \begin{equation*}
-    S_i = \log_2(q) +
+    S_i = \log_2(|\mathcal{A}|) +
     \sum_{a\in\matchal{A}} \omega_i(a)
     \cdot
     \log_2\left(\omega_i(a)\right)
 \end{equation*}
-c'est l'entropie de Shannon l\'eg\`erement corrig\'e. L'impl\'ementation
-de ce calcul est r\'ealis\'e par\break
+c'est l'entropie de Shannon sur les $\omega_i(a)$,
+seulement l\'eg\`erement corrig\'e.
+L'impl\'ementation de ce calcul est r\'ealis\'e par
 \cword{shannon_pswm(i, pswm)} dans
-\cword{pswm} et \cword{real2()} du m\^eme module r\'ealise toute la
+\cword{pswm}; et \cword{real2()} du m\^eme module r\'ealise toute la
 proc\'edure jusqu'au trac\'e de l'entropie relative en fonction de la
-position (F\textsc{igure} \ref{fig:shannon_relative}).
+position (voir F\textsc{igure} \ref{fig:shannon_relative}).
 
 \begin{figure}[h]
 \begin{center}
@@ -148,13 +149,13 @@ position (F\textsc{igure} \ref{fig:shannon_relative}).
 L'entropie maximale est presque significativement atteinte aux positions
 31, 46 et 43. Cela signifie que ces positions ont un r\^ole important
 pour la famille de prot\'eines. Ces positions sont tr\`es fortement conserv\'ees
-et si il advenait qu'elles soient modif\'ees, cela pertuberait fortement
+et si il advenait qu'elles soient modifi\'ees, alors cela pertuberait fortement
 la fonction biologique premi\`ere de la prot\'eine.
 
 Par la suite nous allons examiner si la PSWM nous permet d'identifier
-si d'autres s\'equences sont aussi dans la famille.
+d'autres s\'equences aussi dans la famille.
 
-\subsection{Crit\'ere d'appartenance \`a la famille de prot\'eines}
+\subsection{Crit\`ere d'appartenance \`a la famille de prot\'eines}
 
 \'Etant donn\'e une s\'equence quelconque $b_0\ldots b_{N-1}$, $N\geq L$,
 nous souhaitons savoir si un fragment de cette s\'equence appartient
@@ -171,7 +172,7 @@ et
     f^{(0)}(b)=\frac{1}{L}\sum_{i=0}^{L-1}\omega_i(b).
 \end{equation*}
 Il s'agit d'un mod\`ele nul.
-Nous comparons alors ce mod\`ele nul avec le mod\`ele PSWM \'evalu\'e sur
+Nous comparons alors le mod\`ele nul avec le mod\`ele PSWM \'evalu\'e sur
 la famille de prot\'eines $D_{train}$. Pour cela, nous \'evaluons la quantit\'e
 \newcommand{\lodd}{\mathpzc{l}}
 \begin{equation*}
@@ -185,23 +186,24 @@ ou encore
     \lodd(b_0\ldots b_{L-1}) =
     \sum_{i=0}^{L-1} \left(\log_2 \omega_i(b_i) - \log_2 f^{(0)}(b_i)\right).
 \end{equation*}
-Si $\lodd(b_0\ldots b_{L-1})>0$, on saura que la s\'equence $b$
+Si $\lodd(b_0\ldots b_{L-1})>0$, on sait que la s\'equence $b$
 est plus probable d'appara\^itre dans le mod\`ele PSWM que le mod\`ele nul
-et r\'eciproquement si $\lodd(b_0\ldots b_{L-1})<0$, $b$ est peu probable d'appartenir \`a la famille. 
+et r\'eciproquement si $\lodd(b_0\ldots b_{L-1})<0$, $b$ est
+peu probable d'appartenir \`a la famille.
 La mesure $\lodd$ est appel\'ee \emph{log-vraissemblance}.
 
 Reprenons maintenant \`a $N\geq L$. Il suffit de faire glisser une fen\^etre
-de taille $L$ sur $b$ et de noter pour chaque d\'ecalage la valeur de $\lodd$
-sur la fen\^etre.
+de taille $L$ sur $b$ et de noter sur chacun des d\'ecalage de la fen\^etre
+la valeur de $\lodd$.
 
 Nous disposons d'une s\'equence dans \cword{data/testseq.txt} pour laquelle
-nous aimerions savoir si une partie appartient \`a la famille de
+nous aimerions savoir si un fragment appartient \`a la famille de
 prot\'eines $D_{train}$.
 
 Dans le module \cword{pswm} (\cword{src/pswm.py}),
 \begin{itemize}
     \item \cword{null_model(pswm)} est la m\'ethode qui calcul les
-        valeurs $f^{(0)}$  d\'ecrivant le mod\`ele nul,
+        valeurs prisent par $f^{(0)}$ (d\'ecrit le mod\`ele nul),
     \item \cword{log_odds(sequence, pswm, f0)} calcul la log-vraissemblance
         d'une s\'equence,
     \item \cword{sliding_odds(sequences, pswm)} calcul sur l'ensemble des
@@ -220,8 +222,8 @@ du d\'ecalage de la fen\^etre glissante
     \end{center}
 \end{figure}
 
-Pour la sous-s\'euence $(b_{13}\ldots b_{13+L-1})$ on observe que la
-log-vraissemblance est positive, c'est d'ailleurs la seule fen\^etre o\`u
+Pour la sous-s\'euence $(b_{13}\ldots b_{13+L-1})$ on observe une
+log-vraissemblance positive, c'est d'ailleurs la seule fen\^etre o\`u
 c'est le cas, et par cons\'equent cette sous-s\'equence
 appartient tr\`es probablement \`a la famille de prot\'eine que l'on \'etudie.
 Il est aussi tr\`es probable que cette sous-s\'equence
@@ -231,12 +233,12 @@ de la famille \'etudi\'e.
 \section{Co-\'evolution et corr\'elation avec la structure spatiale}
 
 Nous allons chercher \`a pr\'esent \`a mettre en relation l'information
-des s\'equences de l'alignement avec la structure spatiale d'une prot\'eine
-repr\'esentative de la famille. Cela dit, nous devons enrichir le mod\`ele
-PSWM d\'ecrit avant pour tenir compte de la structure spatiale.
+contenue dans les s\'equences de l'alignement
+avec la structure spatiale d'une prot\'eine repr\'esentative de la famille.
+Cela dit, nous devons enrichir le mod\`ele
+PSWM d\'ecrit ci-avant pour tenir compte de la dimension spatiale.
 
-La piste
-propos\'ee est d'estimer la co-\'evolution de deux positions. Pour deux
+On se propose d'estimer la co-\'evolution de deux positions. Pour deux
 acides amin\'es $a$ et $b$ on souhaite savoir s'ils sont pr\'esents dans la
 s\'equence tel que $a$ soit \`a une premi\`ere position donn\'ee et que $b$ soit
 \`a une seconde position donn\'ee : il s'agit l\`a d'une co-occurence.
@@ -249,7 +251,7 @@ il faut conserver la relation $\sum_b \omega_{i,j}(a,b)=\omega_i(a)$.
 Donc les
 \begin{equation*}
     \omega_{i,j}(a,b)=
-    \frac{n_{i,j}(a,b) + 1/q}{M+q}
+    \frac{n_{i,j}(a,b) + 1/|\mathcal{A}|}{M+|\mathcal{A}|}
 \end{equation*}
 sont les composantes de notre mod\`ele enrichit.
 
@@ -266,14 +268,17 @@ $(i,j)$ est la quantit\'e
 Nous disposons d'une table des distances pour des couples de positions
 (fichier \cword{data/distances.txt}). On consid\`ere qu'une paire est en
 contact si la distance entre ces positions est inf\'erieur \`a 8\r A (0.8nm).
+
 En triant les paires $(i,j)$ par valeurs
 d\'ecroissantes de $M_{i,j}$ autrement dit des paires les plus corr\'el\'ees
-au moins corr\'el\'ees et en d\'eterminant la fraction de paires en contact
-pour chaque tranche de paires selon ce tri, on souhaite d\'eterminer 
-une relation entre la structure spatiale et l'information statistique
+au moins corr\'el\'ees; et en d\'eterminant la fraction de paires en contact
+pour chaque tranche de paires selon ce tri -- il y en a $L^2$.
+On souhaite maintenant d\'eterminer 
+une relation entre les contacts spatiaux et l'information statistique
 dont on dispose pour la famille.  
-La F\textsc{igure} \ref{fig:contacts} est le trac\'e de cette fraction
-en fonction de la taille des tranches (il y a au plus $L^2$ tranches).
+La fraction de paires en contacts en fonction de la taille
+des tranches d\'ecrites ci-avant est trac\'ee
+F\textsc{igure} \ref{fig:contacts}.
 
 \begin{figure}[h]
     \begin{center}
@@ -284,7 +289,7 @@ en fonction de la taille des tranches (il y a au plus $L^2$ tranches).
 \end{figure}
 
 Tout le proc\'ed\'e jusqu'\`a la r\'ealisation du trac\'e est impl\'ement\'e
-par \cword{real4()} dans le moduel \cword{coev} (\cword{src/coev.py}).
+par \cword{real4()} dans le module \cword{coev} (\cword{src/coev.py}).
 Cette r\'ealisation s'appui sur les fonctions
 \begin{itemize}
     \item \cword{estimate_cooc(data)}
@@ -294,32 +299,33 @@ Cette r\'ealisation s'appui sur les fonctions
     \item \cword{induced_contacts(mim, distances)}
         qui d\'etermine les fractions des paires en contacts;
 \end{itemize}
-toutes dans m\^eme module \cword{coev}.
+toutes ces fonctions sont dans le m\^eme module (\cword{coev}).
 
 On observe que plus on consid\`ere une tranche de paires fortement 
 corr\'el\'ees, plus la fraction de paires en contacts est importante.
+
 D'une part il s'agit d'un r\'esultat obtenu par comptage sur les
 s\'equences et d'autre part il s'agit d'une mesure physique et d'une
 propri\'et\'e spatiale.
-Pour cette famille de prot\'eines, on peut induire la propri\'et\'e
-spatiale de contact \`a partir du proc\'ed\'e statistique d\'ecrit
-ici, i.e., les paires les plus corr\'el\'ees ont une probabilit\'e
-\'elev\'ee d'\^etre en contact.
+Pour notre famille de prot\'eines, on peut donc induire la propri\'et\'e
+spatiale du contact simplement \`a partir des statistiques d\'ecrites ici :
+les paires les plus corr\'el\'ees ont une probabilit\'e plus \'elev\'ee
+d'\^etre en contact.
 
 
 \hspace{1in}
 \paragraph{Conclusion:}
 Nous avons mis en \'evidence que les outils statistiques sont des outils
 puissant et utiles en biologie. Les proc\'ed\'es d\'ecrits pour
-l'analyse de la famille de prot\'eines \'etudi\'ee sont reproductibles si
+l'analyse de la famille de prot\'eines \'etudi\'ee ici sont reproductibles si
 on dispose d'un alignement d'une autre famille et ils nous permettraient
 d'identifier
 \vskip 1mm
 \begin{itemize}
     \item les positions caract\'erisitiques de la famille qui d\'eterminent
-        l'expression de ses fonctions biologiques,
+        l'expression de ses fonctions biologiques;
         \vskip 1mm
-    \item d'autres s\'equences appartenant probablement \`a la famille et
+    \item d'autres s\'equences appartenant probablement \`a la famille; et
         \vskip 1mm
     \item des propri\'et\'es spatiales, qui, enrichies par d'autres
         proc\'edures, nous permettrait de
